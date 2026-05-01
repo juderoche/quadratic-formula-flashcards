@@ -1,0 +1,97 @@
+
+<h2 class="sr-only">Interactive flashcards for learning the quadratic formula step by step</h2>
+<style>
+  .deck { max-width: 560px; margin: 1.5rem auto; padding: 0 1rem; font-family: var(--font-sans); }
+  .progress-bar-bg { height: 4px; background: var(--color-border-tertiary); border-radius: 2px; margin-bottom: 1.5rem; }
+  .progress-bar-fill { height: 4px; background: #185FA5; border-radius: 2px; transition: width 0.4s ease; }
+  .card-wrap { perspective: 1000px; height: 280px; cursor: pointer; margin-bottom: 1.25rem; }
+  .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.55s cubic-bezier(.4,0,.2,1); transform-style: preserve-3d; }
+  .card-wrap.flipped .card-inner { transform: rotateY(180deg); }
+  .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; box-sizing: border-box; }
+  .face.back { transform: rotateY(180deg); background: var(--color-background-secondary); }
+  .card-tag { font-size: 12px; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem; }
+  .card-q { font-size: 17px; font-weight: 500; color: var(--color-text-primary); text-align: center; line-height: 1.5; }
+  .card-a { font-size: 15px; color: var(--color-text-primary); text-align: center; line-height: 1.7; }
+  .formula { font-family: var(--font-mono); font-size: 20px; font-weight: 500; color: #185FA5; display: block; margin: 0.5rem 0 1rem; }
+  .formula-sm { font-family: var(--font-mono); font-size: 14px; color: #185FA5; }
+  .hint { font-size: 13px; color: var(--color-text-secondary); margin-top: 0.5rem; }
+  .flip-hint { font-size: 12px; color: var(--color-text-tertiary); text-align: center; margin-bottom: 1rem; }
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .nav-btn { flex: 1; padding: 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); font-size: 14px; color: var(--color-text-primary); cursor: pointer; }
+  .nav-btn:hover { background: var(--color-background-secondary); }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+  .counter { font-size: 14px; color: var(--color-text-secondary); min-width: 56px; text-align: center; }
+  .highlight { background: #E6F1FB; color: #0C447C; border-radius: 4px; padding: 1px 6px; font-family: var(--font-mono); font-size: 14px; }
+  .step-label { font-size: 12px; font-weight: 500; color: #185FA5; background: #E6F1FB; padding: 3px 10px; border-radius: 20px; margin-bottom: 0.75rem; }
+</style>
+
+<div class="deck">
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="prog" style="width:14%"></div></div>
+  <p class="flip-hint">Tap the card to flip it</p>
+
+  <div class="card-wrap" id="card" onclick="this.classList.toggle('flipped')">
+    <div class="card-inner">
+      <div class="face front" id="front"></div>
+      <div class="face back" id="back"></div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn" id="prevBtn" onclick="move(-1)" disabled>← Prev</button>
+    <span class="counter" id="counter">1 / 7</span>
+    <button class="nav-btn" id="nextBtn" onclick="move(1)">Next →</button>
+  </div>
+</div>
+
+<script>
+const cards = [
+  {
+    q: `<div class="card-tag">The big picture</div><p class="card-q">What is the quadratic formula used for?</p>`,
+    a: `<div class="card-tag">Answer</div><p class="card-a">It solves any equation in the form <span class="formula-sm">ax² + bx + c = 0</span> for the value(s) of x — called the <strong>roots</strong> or solutions.</p>`
+  },
+  {
+    q: `<div class="card-tag">Memorize it</div><p class="card-q">What is the quadratic formula?</p>`,
+    a: `<div class="card-tag">The formula</div><span class="formula">x = (−b ± √(b²−4ac)) / 2a</span><p class="hint">Say it aloud: "negative b, plus or minus the square root of b squared minus 4ac, all over 2a"</p>`
+  },
+  {
+    q: `<div class="card-tag">Step 1</div><p class="card-q">What's the first thing you do when solving with the quadratic formula?</p>`,
+    a: `<div class="step-label">Step 1</div><p class="card-a">Write the equation in standard form: <span class="formula-sm">ax² + bx + c = 0</span><br><br>Then identify <span class="highlight">a</span>, <span class="highlight">b</span>, and <span class="highlight">c</span>.</p>`
+  },
+  {
+    q: `<div class="card-tag">Identify values</div><p class="card-q">In 2x² − 3x + 1 = 0, what are a, b, and c?</p>`,
+    a: `<div class="card-tag">Answer</div><p class="card-a"><span class="highlight">a = 2</span> &nbsp; <span class="highlight">b = −3</span> &nbsp; <span class="highlight">c = 1</span><br><br>Watch the signs — b is negative here!</p>`
+  },
+  {
+    q: `<div class="card-tag">The discriminant</div><p class="card-q">What is the discriminant and what does it tell you?</p>`,
+    a: `<div class="card-tag">Answer</div><p class="card-a">The discriminant is <span class="formula-sm">b²−4ac</span> (inside the square root).<br><br>• Positive → 2 real solutions<br>• Zero → 1 solution<br>• Negative → no real solutions</p>`
+  },
+  {
+    q: `<div class="card-tag">Step 2</div><p class="card-q">Solve 2x² − 3x + 1 = 0 using the formula. What do you get?</p>`,
+    a: `<div class="step-label">Step 2 — plug in</div><p class="card-a"><span class="formula-sm">x = (3 ± √(9 − 8)) / 4</span><br><span class="formula-sm">x = (3 ± √1) / 4</span><br><span class="formula-sm">x = (3 ± 1) / 4</span><br><br>→ x = 1 &nbsp;or&nbsp; x = ½</p>`
+  },
+  {
+    q: `<div class="card-tag">Common mistake</div><p class="card-q">What's the most common error when using the formula?</p>`,
+    a: `<div class="card-tag">Watch out for</div><p class="card-a">• Forgetting the negative sign on <span class="highlight">−b</span><br>• Not dividing the whole numerator by 2a<br>• Dropping the <span class="highlight">±</span> and only finding one solution</p>`
+  }
+];
+
+let current = 0;
+
+function render() {
+  const c = cards[current];
+  document.getElementById('front').innerHTML = c.q;
+  document.getElementById('back').innerHTML = c.a;
+  document.getElementById('card').classList.remove('flipped');
+  document.getElementById('counter').textContent = `${current+1} / ${cards.length}`;
+  document.getElementById('prog').style.width = `${((current+1)/cards.length)*100}%`;
+  document.getElementById('prevBtn').disabled = current === 0;
+  document.getElementById('nextBtn').disabled = current === cards.length - 1;
+}
+
+function move(dir) {
+  current = Math.max(0, Math.min(cards.length - 1, current + dir));
+  render();
+}
+
+render();
+</script>
